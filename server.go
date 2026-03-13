@@ -1,11 +1,25 @@
+// @title           Beancount-GS API
+// @version         1.0
+// @description     Beancount-GS 是一个基于 Beancount 的个人财务管理系统，提供账本管理、交易记录、统计分析等功能。
+// @contact.name    BaoXuebin
+// @host            localhost:10000
+// @BasePath        /
+// @securityDefinitions.apikey LedgerId
+// @in              header
+// @name            ledgerId
+// @description     需要授权的接口请在 Header 中传入 ledgerId
+
 package main
 
 import (
 	"flag"
 	"fmt"
+	_ "github.com/beancount-gs/docs"
 	"github.com/beancount-gs/script"
 	"github.com/beancount-gs/service"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"io"
 	"net/http"
 	"os"
@@ -48,6 +62,7 @@ func RegisterRouter(router *gin.Engine) {
 		c.Redirect(http.StatusMovedPermanently, "/web")
 	})
 	router.StaticFS("/web", http.Dir("./public"))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/api/version", service.QueryVersion)
 	router.POST("/api/check", service.CheckBeancount)
 	router.GET("/api/config", service.QueryServerConfig)

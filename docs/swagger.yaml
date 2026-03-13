@@ -1,0 +1,1640 @@
+basePath: /
+definitions:
+  service.AddAccountForm:
+    properties:
+      account:
+        type: string
+      currency:
+        description: 账户计量单位可以为空
+        type: string
+      date:
+        type: string
+    required:
+    - account
+    - date
+    type: object
+  service.AddAccountTypeForm:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
+  service.BalanceAccountForm:
+    properties:
+      account:
+        type: string
+      date:
+        type: string
+      number:
+        type: string
+    required:
+    - account
+    - date
+    - number
+    type: object
+  service.CloseAccountForm:
+    properties:
+      account:
+        type: string
+      date:
+        type: string
+    required:
+    - account
+    - date
+    type: object
+  service.Event:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      stage:
+        type: string
+      type:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+    required:
+    - date
+    - description
+    type: object
+  service.LoginForm:
+    properties:
+      isBak:
+        type: boolean
+      ledgerName:
+        type: string
+      openingBalances:
+        type: string
+      operatingCurrency:
+        type: string
+      secret:
+        type: string
+      startDate:
+        type: string
+    required:
+    - ledgerName
+    type: object
+  service.SyncCommodityPriceForm:
+    properties:
+      commodity:
+        type: string
+      date:
+        type: string
+      price:
+        type: string
+    required:
+    - commodity
+    - date
+    - price
+    type: object
+  service.TransactionEntryForm:
+    properties:
+      account:
+        type: string
+      currency:
+        type: string
+      isAnotherCurrency:
+        type: boolean
+      number:
+        type: number
+      price:
+        type: number
+      priceCurrency:
+        type: string
+    required:
+    - account
+    type: object
+  service.TransactionForm:
+    properties:
+      date:
+        type: string
+      desc:
+        type: string
+      divideDateList:
+        items:
+          type: string
+        type: array
+      entries:
+        items:
+          $ref: '#/definitions/service.TransactionEntryForm'
+        type: array
+      id:
+        type: string
+      narration:
+        type: string
+      payee:
+        type: string
+      rawText:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    required:
+    - date
+    - desc
+    type: object
+  service.TransactionTemplate:
+    properties:
+      date:
+        type: string
+      desc:
+        type: string
+      entries:
+        items:
+          $ref: '#/definitions/service.TransactionEntryForm'
+        type: array
+      id:
+        type: string
+      payee:
+        type: string
+      templateName:
+        type: string
+    required:
+    - date
+    - desc
+    - templateName
+    type: object
+  service.UpdateConfigForm:
+    properties:
+      dataPath:
+        type: string
+      isBak:
+        type: boolean
+      openingBalances:
+        type: string
+      operatingCurrency:
+        type: string
+      secret:
+        type: string
+      startDate:
+        type: string
+    required:
+    - dataPath
+    - isBak
+    - openingBalances
+    - operatingCurrency
+    - secret
+    - startDate
+    type: object
+  service.UpdateRawTextTransactionForm:
+    properties:
+      id:
+        type: string
+      rawText:
+        type: string
+    required:
+    - id
+    - rawText
+    type: object
+  service.UpdateSourceFileForm:
+    properties:
+      content:
+        type: string
+      path:
+        type: string
+    required:
+    - path
+    type: object
+host: localhost:10000
+info:
+  contact:
+    name: BaoXuebin
+  description: Beancount-GS 是一个基于 Beancount 的个人财务管理系统，提供账本管理、交易记录、统计分析等功能。
+  title: Beancount-GS API
+  version: "1.0"
+paths:
+  /api/auth/account:
+    post:
+      consumes:
+      - application/json
+      description: 在账本中开启一个新账户
+      parameters:
+      - description: 新增账户表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.AddAccountForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 创建新账户
+      tags:
+      - 账户
+  /api/auth/account/all:
+    get:
+      description: 返回所有未关闭账户及其币种余额和市场价値
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取全部账户列表（含余额）
+      tags:
+      - 账户
+  /api/auth/account/balance:
+    post:
+      consumes:
+      - application/json
+      description: 对指定账户创建一条 balance 断言录入账本
+      parameters:
+      - description: 平衡账户表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.BalanceAccountForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 平衡账户余额
+      tags:
+      - 账户
+  /api/auth/account/close:
+    post:
+      consumes:
+      - application/json
+      description: 在账本中关闭指定账户，记录关闭日期
+      parameters:
+      - description: 关闭账户表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.CloseAccountForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 关闭账户
+      tags:
+      - 账户
+  /api/auth/account/icon:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传图片文件以更换指定账户的图标
+      parameters:
+      - description: 账户名称
+        in: query
+        name: account
+        required: true
+        type: string
+      - description: 图标图片文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 更换账户图标
+      tags:
+      - 账户
+  /api/auth/account/refresh:
+    post:
+      description: 重新加载当前账本的账户列表和货币汇率缓存
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 刷新账户缓存
+      tags:
+      - 账户
+  /api/auth/account/type:
+    get:
+      description: 返回当前账本定义的所有账户类型（Key/Name 对）
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取账户类型列表
+      tags:
+      - 账户
+    post:
+      consumes:
+      - application/json
+      description: 为当前账本新增一种账户类型映射
+      parameters:
+      - description: 新增类型表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.AddAccountTypeForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 添加账户类型
+      tags:
+      - 账户
+  /api/auth/account/valid:
+    get:
+      description: 返回未关闭的所有账户，包含多货币信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取有效账户列表
+      tags:
+      - 账户
+  /api/auth/commodity/currencies:
+    get:
+      description: 返回当前账本中所有货币及其最新汇率
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取所有货币列表
+      tags:
+      - 商品
+  /api/auth/commodity/price:
+    post:
+      consumes:
+      - application/json
+      description: 向账本写入一条新的 price 条目，并刷新货币汇率缓存
+      parameters:
+      - description: 商品价格表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.SyncCommodityPriceForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 同步商品价格
+      tags:
+      - 商品
+  /api/auth/event:
+    delete:
+      consumes:
+      - application/json
+      description: 从账本中删除匹配的 event 记录
+      parameters:
+      - description: 要删除的事件
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.Event'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 删除事件
+      tags:
+      - 事件
+    post:
+      consumes:
+      - application/json
+      description: 向账本中写入一条或多条新的 event 记录
+      parameters:
+      - description: 事件表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.Event'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 添加事件
+      tags:
+      - 事件
+  /api/auth/event/all:
+    get:
+      description: 返回账本中所有记录的事件列表，按日期倒序排列
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取所有事件
+      tags:
+      - 事件
+  /api/auth/file:
+    post:
+      consumes:
+      - application/json
+      description: 更新指定账本文件的内容，先自动备份再写入
+      parameters:
+      - description: 文件更新表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateSourceFileForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 更新账本文件内容
+      tags:
+      - 文件
+  /api/auth/file/content:
+    get:
+      description: 返回指定相对路径的 .bean 源文件内容
+      parameters:
+      - description: 文件相对路径
+        in: query
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 读取账本文件内容
+      tags:
+      - 文件
+  /api/auth/file/dir:
+    get:
+      description: 返回账本数据目录下所有 .bean 文件的相对路径列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取账本文件目录结构
+      tags:
+      - 文件
+  /api/auth/import/abc:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 解析农业銀行导出的 CSV 账单文件，返回解析后的交易预览列表
+      parameters:
+      - description: 农业銀行 CSV 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 导入农业銀行账单 CSV
+      tags:
+      - 导入
+  /api/auth/import/alipay:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 解析支付宝导出的 CSV 账单文件，返回解析后的交易预览列表
+      parameters:
+      - description: 支付宝 CSV 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 导入支付宝账单 CSV
+      tags:
+      - 导入
+  /api/auth/import/icbc:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 解析工商銀行导出的 CSV 账单文件，返回解析后的交易预览列表
+      parameters:
+      - description: 工商銀行 CSV 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 导入工商銀行账单 CSV
+      tags:
+      - 导入
+  /api/auth/import/wx:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 解析微信支付导出的 CSV 账单文件，返回解析后的交易预览列表
+      parameters:
+      - description: 微信支付 CSV 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 导入微信支付账单 CSV
+      tags:
+      - 导入
+  /api/auth/ledger:
+    delete:
+      description: 删除当前账本的所有数据文件（不可恢复），需要 ledgerId 认证
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 删除账本
+      tags:
+      - 账本
+  /api/auth/ledger/check:
+    get:
+      description: 运行 bean-check 对账本文件进行语法和余额校验，返回错误列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 检查账本合法性
+      tags:
+      - 账本
+  /api/auth/stats/account/balance:
+    get:
+      description: 统计指定账户每天的最后余额变化
+      parameters:
+      - description: 账户前缀筛选
+        in: query
+        name: prefix
+        type: string
+      - description: 年份筛选
+        in: query
+        name: year
+        type: integer
+      - description: 月份筛选
+        in: query
+        name: month
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 账户余额变化统计
+      tags:
+      - 统计
+  /api/auth/stats/account/flow:
+    get:
+      description: 统计指定时间范围内账户之间的资金流向，用于渲染桑基图
+      parameters:
+      - description: 账户前缀筛选
+        in: query
+        name: prefix
+        type: string
+      - description: 年份筛选
+        in: query
+        name: year
+        type: integer
+      - description: 月份筛选
+        in: query
+        name: month
+        type: integer
+      - description: 账户层级
+        in: query
+        name: level
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 账户资金流向统计
+      tags:
+      - 统计
+  /api/auth/stats/account/percent:
+    get:
+      description: 统计指定前缀账户在某时间范围内的金额占比
+      parameters:
+      - description: 账户前缀筛选
+        in: query
+        name: prefix
+        type: string
+      - description: 年份筛选
+        in: query
+        name: year
+        type: integer
+      - description: 月份筛选
+        in: query
+        name: month
+        type: integer
+      - description: 账户层级（1表示按类型合并）
+        in: query
+        name: level
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 账户占比统计
+      tags:
+      - 统计
+  /api/auth/stats/account/trend:
+    get:
+      description: 统计指定账户在不同时间维度（day/month/year/sum）的金额变化趋势
+      parameters:
+      - description: 账户前缀筛选
+        in: query
+        name: prefix
+        type: string
+      - description: 年份筛选
+        in: query
+        name: year
+        type: integer
+      - description: 月份筛选
+        in: query
+        name: month
+        type: integer
+      - description: 时间维度：day/month/year/sum
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 账户趋势统计
+      tags:
+      - 统计
+  /api/auth/stats/commodity/price:
+    get:
+      description: 返回账本中记录的全部商品价格历史数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 商品价格历史
+      tags:
+      - 统计
+  /api/auth/stats/month/calendar:
+    get:
+      description: 统计指定年月内每天的支出金额，用于渲染日历热力图
+      parameters:
+      - description: 年份
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: 月份
+        in: query
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 月度日历热力图统计
+      tags:
+      - 统计
+  /api/auth/stats/month/total:
+    get:
+      description: 按月统计收入与支出金额，返回每月的收支折线/柱状图数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 月度收支汇总统计
+      tags:
+      - 统计
+  /api/auth/stats/months:
+    get:
+      description: 返回账本中存在交易记录的所有年月，按年月倒序排列
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取所有交易月份列表
+      tags:
+      - 统计
+  /api/auth/stats/payee:
+    get:
+      description: 统计指定时间范围内各商家的支出金额，按金额排序
+      parameters:
+      - description: 账户前缀筛选
+        in: query
+        name: prefix
+        type: string
+      - description: 年份筛选
+        in: query
+        name: year
+        type: integer
+      - description: 月份筛选
+        in: query
+        name: month
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 商家支出统计
+      tags:
+      - 统计
+  /api/auth/stats/total:
+    get:
+      description: 返回每种一级账户类型（Assets/Liabilities/Income/Expenses/Equity）的总金额
+      parameters:
+      - description: 月份筛选，格式 2006-01
+        in: query
+        name: month
+        type: string
+      - description: 年份筛选
+        in: query
+        name: year
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取所有账户类型汇总
+      tags:
+      - 统计
+  /api/auth/tags:
+    get:
+      description: 返回当前账本中使用过的所有交易标签
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取所有标签
+      tags:
+      - 标签
+  /api/auth/transaction:
+    delete:
+      description: 根据交易 ID 删除交易记录
+      parameters:
+      - description: 交易 ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 删除交易
+      tags:
+      - 交易
+    get:
+      description: 查询交易列表，支持按时间和账户筛选
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取交易列表
+      tags:
+      - 交易
+    post:
+      consumes:
+      - application/json
+      description: 新增交易，或传入 ID 更新已有交易
+      parameters:
+      - description: 交易表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.TransactionForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 新增或更新交易
+      tags:
+      - 交易
+  /api/auth/transaction/batch:
+    post:
+      consumes:
+      - application/json
+      description: 批量写入多条交易记录到账本
+      parameters:
+      - description: 批量交易表单
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/service.TransactionForm'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 批量新增交易
+      tags:
+      - 交易
+  /api/auth/transaction/detail:
+    get:
+      description: 根据交易 ID 获取交易详情（含分录）
+      parameters:
+      - description: 交易 ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取交易详情
+      tags:
+      - 交易
+  /api/auth/transaction/payee:
+    get:
+      description: 返回最近交易中的商家名称列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取交易商家列表
+      tags:
+      - 交易
+  /api/auth/transaction/raw:
+    get:
+      description: 根据交易 ID 获取原始文本
+      parameters:
+      - description: 交易 ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取交易原始文本
+      tags:
+      - 交易
+    post:
+      consumes:
+      - application/json
+      description: 根据交易 ID 更新原始文本
+      parameters:
+      - description: 更新原始文本表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateRawTextTransactionForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 更新交易原始文本
+      tags:
+      - 交易
+  /api/auth/transaction/template:
+    delete:
+      description: 根据模板 ID 删除交易模板
+      parameters:
+      - description: 模板 ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 删除交易模板
+      tags:
+      - 交易模板
+    get:
+      description: 返回账本中保存的交易模板
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 获取交易模板列表
+      tags:
+      - 交易模板
+    post:
+      consumes:
+      - application/json
+      description: 新增一条交易模板配置
+      parameters:
+      - description: 交易模板
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.TransactionTemplate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - LedgerId: []
+      summary: 新增交易模板
+      tags:
+      - 交易模板
+  /api/check:
+    post:
+      description: 检查服务器上是否已安装 bean-query 命令
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 检查 beancount 环境
+      tags:
+      - 系统
+  /api/config:
+    get:
+      description: 返回服务器的全局配置信息，包含 DataPath、货币、日期等设置
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 获取全局服务配置
+      tags:
+      - 配置
+    post:
+      consumes:
+      - application/json
+      description: 更新服务器全局配置；需要提供 secret、startDate、dataPath、operatingCurrency 等字段
+      parameters:
+      - description: 全局配置表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateConfigForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 更新全局服务配置
+      tags:
+      - 配置
+  /api/ledger:
+    get:
+      description: 返回所有已创建的账本信息列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 获取账本列表
+      tags:
+      - 账本
+    post:
+      consumes:
+      - application/json
+      description: 根据 ledgerName 和 secret 打开已有账本或创建新账本，成功后返回 ledgerId
+      parameters:
+      - description: 账本登录/创建表单
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.LoginForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 打开或创建账本
+      tags:
+      - 账本
+  /api/version:
+    get:
+      description: 返回当前 beancount-gs 服务版本号
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 获取服务版本号
+      tags:
+      - 系统
+securityDefinitions:
+  LedgerId:
+    description: 需要授权的接口请在 Header 中传入 ledgerId
+    in: header
+    name: ledgerId
+    type: apiKey
+swagger: "2.0"

@@ -18,6 +18,15 @@ type YearMonth struct {
 	Month string `bql:"month(date)" json:"month"`
 }
 
+// MonthsList godoc
+// @Summary     获取所有交易月份列表
+// @Description 返回账本中存在交易记录的所有年月，按年月倒序排列
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/months [get]
 func MonthsList(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	// 添加排序
@@ -41,6 +50,17 @@ type StatsResult struct {
 	Value string
 }
 
+// StatsTotal godoc
+// @Summary     获取所有账户类型汇总
+// @Description 返回每种一级账户类型（Assets/Liabilities/Income/Expenses/Equity）的总金额
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       month  query string false "月份筛选，格式 2006-01"
+// @Param       year   query int    false "年份筛选"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/total [get]
 func StatsTotal(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	queryParams := script.GetQueryParams(c)
@@ -82,6 +102,19 @@ type AccountPercentResult struct {
 	OperatingCurrency string          `json:"operatingCurrency"`
 }
 
+// StatsAccountPercent godoc
+// @Summary     账户占比统计
+// @Description 统计指定前缀账户在某时间范围内的金额占比
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       prefix query string false "账户前缀筛选"
+// @Param       year   query int    false "年份筛选"
+// @Param       month  query int    false "月份筛选"
+// @Param       level  query int    false "账户层级（1表示按类型合并）"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/account/percent [get]
 func StatsAccountPercent(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	var statsQuery StatsQuery
@@ -150,6 +183,19 @@ type AccountTrendResult struct {
 	OperatingCurrency string      `json:"operatingCurrency"`
 }
 
+// StatsAccountTrend godoc
+// @Summary     账户趋势统计
+// @Description 统计指定账户在不同时间维度（day/month/year/sum）的金额变化趋势
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       prefix query string false "账户前缀筛选"
+// @Param       year   query int    false "年份筛选"
+// @Param       month  query int    false "月份筛选"
+// @Param       type   query string false "时间维度：day/month/year/sum"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/account/trend [get]
 func StatsAccountTrend(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	var statsQuery StatsQuery
@@ -227,6 +273,18 @@ type AccountBalanceResult struct {
 	OperatingCurrency string      `json:"operatingCurrency"`
 }
 
+// StatsAccountBalance godoc
+// @Summary     账户余额变化统计
+// @Description 统计指定账户每天的最后余额变化
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       prefix query string false "账户前缀筛选"
+// @Param       year   query int    false "年份筛选"
+// @Param       month  query int    false "月份筛选"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/account/balance [get]
 func StatsAccountBalance(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	var statsQuery StatsQuery
@@ -300,7 +358,19 @@ type TransactionAccountPosition struct {
 	OperatingCurrency string
 }
 
-// StatsAccountSankey 统计账户流向
+// StatsAccountSankey godoc
+// @Summary     账户资金流向统计
+// @Description 统计指定时间范围内账户之间的资金流向，用于渲染桑基图
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       prefix query string false "账户前缀筛选"
+// @Param       year   query int    false "年份筛选"
+// @Param       month  query int    false "月份筛选"
+// @Param       level  query int    false "账户层级"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/account/flow [get]
 func StatsAccountSankey(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	var statsQuery StatsQuery
@@ -690,6 +760,15 @@ func (s MonthTotalSort) Less(i, j int) bool {
 	return iYearMonth.Before(jYearMonth)
 }
 
+// StatsMonthTotal godoc
+// @Summary     月度收支汇总统计
+// @Description 按月统计收入与支出金额，返回每月的收支折线/柱状图数据
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/month/total [get]
 func StatsMonthTotal(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 
@@ -777,6 +856,17 @@ type StatsCalendarResult struct {
 	CurrencySymbol string      `json:"currencySymbol"`
 }
 
+// StatsMonthCalendar godoc
+// @Summary     月度日历热力图统计
+// @Description 统计指定年月内每天的支出金额，用于渲染日历热力图
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       year  query int true  "年份"
+// @Param       month query int true  "月份"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/month/calendar [get]
 func StatsMonthCalendar(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	var statsMonthQuery StatsMonthQuery
@@ -839,6 +929,18 @@ func (s StatsPayeeResultSort) Less(i, j int) bool {
 	b, _ := s[j].Value.Float64()
 	return a <= b
 }
+// StatsPayee godoc
+// @Summary     商家支出统计
+// @Description 统计指定时间范围内各商家的支出金额，按金额排序
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Param       prefix query string false "账户前缀筛选"
+// @Param       year   query int    false "年份筛选"
+// @Param       month  query int    false "月份筛选"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/payee [get]
 func StatsPayee(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	var statsQuery StatsQuery
@@ -903,6 +1005,15 @@ func StatsPayee(c *gin.Context) {
 	OK(c, result)
 }
 
+// StatsCommodityPrice godoc
+// @Summary     商品价格历史
+// @Description 返回账本中记录的全部商品价格历史数据
+// @Tags        统计
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/stats/commodity/price [get]
 func StatsCommodityPrice(c *gin.Context) {
 	OK(c, script.BeanReportAllPrices(script.GetLedgerConfigFromContext(c)))
 }

@@ -13,6 +13,17 @@ import (
 	"time"
 )
 
+// ImportAliPayCSV godoc
+// @Summary     导入支付宝账单 CSV
+// @Description 解析支付宝导出的 CSV 账单文件，返回解析后的交易预览列表
+// @Tags        导入
+// @Accept      mpfd
+// @Produce     json
+// @Security    LedgerId
+// @Param       file formData file true "支付宝 CSV 文件"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/import/alipay [post]
 func ImportAliPayCSV(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 
@@ -114,6 +125,17 @@ func importMobileAliPayCSV(lines []string, currency string, currencySymbol strin
 	return Transaction{}, errors.New("parse error")
 }
 
+// ImportWxPayCSV godoc
+// @Summary     导入微信支付账单 CSV
+// @Description 解析微信支付导出的 CSV 账单文件，返回解析后的交易预览列表
+// @Tags        导入
+// @Accept      mpfd
+// @Produce     json
+// @Security    LedgerId
+// @Param       file formData file true "微信支付 CSV 文件"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/import/wx [post]
 func ImportWxPayCSV(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 
@@ -163,6 +185,17 @@ func ImportWxPayCSV(c *gin.Context) {
 	OK(c, result)
 }
 
+// ImportICBCCSV godoc
+// @Summary     导入工商銀行账单 CSV
+// @Description 解析工商銀行导出的 CSV 账单文件，返回解析后的交易预览列表
+// @Tags        导入
+// @Accept      mpfd
+// @Produce     json
+// @Security    LedgerId
+// @Param       file formData file true "工商銀行 CSV 文件"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/import/icbc [post]
 func ImportICBCCSV(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 
@@ -216,6 +249,17 @@ func ImportICBCCSV(c *gin.Context) {
 	OK(c, result)
 }
 
+// ImportABCCSV godoc
+// @Summary     导入农业銀行账单 CSV
+// @Description 解析农业銀行导出的 CSV 账单文件，返回解析后的交易预览列表
+// @Tags        导入
+// @Accept      mpfd
+// @Produce     json
+// @Security    LedgerId
+// @Param       file formData file true "农业銀行 CSV 文件"
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/import/abc [post]
 func ImportABCCSV(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 

@@ -1,8 +1,7 @@
 # 构建 beancount-gs
-FROM golang:1.17.3 AS go_builder
+FROM golang:1.23.4 AS go_builder
 
 ENV GO111MODULE=on \
-    GOPROXY=https://goproxy.cn,direct \
     GIN_MODE=release \
     CGO_ENABLED=0 \
     PORT=80

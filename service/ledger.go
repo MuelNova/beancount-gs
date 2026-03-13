@@ -16,6 +16,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CheckBeancount godoc
+// @Summary     检查 beancount 环境
+// @Description 检查服务器上是否已安装 bean-query 命令
+// @Tags        系统
+// @Produce     json
+// @Success     200 {object} map[string]interface{}
+// @Router      /api/check [post]
 func CheckBeancount(c *gin.Context) {
 	cmd := exec.Command("bean-query", "--version")
 	output, err := cmd.Output()
@@ -26,6 +33,13 @@ func CheckBeancount(c *gin.Context) {
 	OK(c, string(output))
 }
 
+// QueryServerConfig godoc
+// @Summary     获取全局服务配置
+// @Description 返回服务器的全局配置信息，包含 DataPath、货币、日期等设置
+// @Tags        配置
+// @Produce     json
+// @Success     200 {object} map[string]interface{}
+// @Router      /api/config [get]
 func QueryServerConfig(c *gin.Context) {
 	OK(c, script.GetServerConfig())
 }
@@ -51,6 +65,13 @@ func (s LedgerSort) Less(i, j int) bool {
 	return s[i].CreateDate <= s[j].CreateDate && s[i].Mail <= s[j].Mail
 }
 
+// QueryLedgerList godoc
+// @Summary     获取账本列表
+// @Description 返回所有已创建的账本信息列表
+// @Tags        账本
+// @Produce     json
+// @Success     200 {object} map[string]interface{}
+// @Router      /api/ledger [get]
 func QueryLedgerList(c *gin.Context) {
 	result := make([]QueryLedgerResult, 0)
 	for _, config := range script.GetLedgerConfigMap() {
@@ -74,6 +95,16 @@ type UpdateConfigForm struct {
 	IsBak             bool   `form:"isBak" binding:"required"`
 }
 
+// UpdateServerConfig godoc
+// @Summary     更新全局服务配置
+// @Description 更新服务器全局配置；需要提供 secret、startDate、dataPath、operatingCurrency 等字段
+// @Tags        配置
+// @Accept      json
+// @Produce     json
+// @Param       body body UpdateConfigForm true "全局配置表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Router      /api/config [post]
 func UpdateServerConfig(c *gin.Context) {
 	var updateConfigForm UpdateConfigForm
 	if err := c.ShouldBindJSON(&updateConfigForm); err != nil {
@@ -129,6 +160,16 @@ type LoginForm struct {
 	IsBak             bool   `form:"isBak"`
 }
 
+// OpenOrCreateLedger godoc
+// @Summary     打开或创建账本
+// @Description 根据 ledgerName 和 secret 打开已有账本或创建新账本，成功后返回 ledgerId
+// @Tags        账本
+// @Accept      json
+// @Produce     json
+// @Param       body body LoginForm true "账本登录/创建表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Router      /api/ledger [post]
 func OpenOrCreateLedger(c *gin.Context) {
 	var loginForm LoginForm
 	if err := c.ShouldBindJSON(&loginForm); err != nil {
@@ -181,6 +222,15 @@ func OpenOrCreateLedger(c *gin.Context) {
 	OK(c, resultMap)
 }
 
+// DeleteLedger godoc
+// @Summary     删除账本
+// @Description 删除当前账本的所有数据文件（不可恢复），需要 ledgerId 认证
+// @Tags        账本
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/ledger [delete]
 func DeleteLedger(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	// remove from ledger_config.json
@@ -208,6 +258,15 @@ func DeleteLedger(c *gin.Context) {
 	OK(c, "OK")
 }
 
+// CheckLedger godoc
+// @Summary     检查账本合法性
+// @Description 运行 bean-check 对账本文件进行语法和余额校验，返回错误列表
+// @Tags        账本
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/ledger/check [get]
 func CheckLedger(c *gin.Context) {
 	var stderr bytes.Buffer
 	ledgerConfig := script.GetLedgerConfigFromContext(c)

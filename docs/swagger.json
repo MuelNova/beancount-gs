@@ -1,0 +1,2519 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Beancount-GS 是一个基于 Beancount 的个人财务管理系统，提供账本管理、交易记录、统计分析等功能。",
+        "title": "Beancount-GS API",
+        "contact": {
+            "name": "BaoXuebin"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:10000",
+    "basePath": "/",
+    "paths": {
+        "/api/auth/account": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "在账本中开启一个新账户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "创建新账户",
+                "parameters": [
+                    {
+                        "description": "新增账户表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.AddAccountForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/all": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回所有未关闭账户及其币种余额和市场价値",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "获取全部账户列表（含余额）",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/balance": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "对指定账户创建一条 balance 断言录入账本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "平衡账户余额",
+                "parameters": [
+                    {
+                        "description": "平衡账户表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.BalanceAccountForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/close": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "在账本中关闭指定账户，记录关闭日期",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "关闭账户",
+                "parameters": [
+                    {
+                        "description": "关闭账户表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.CloseAccountForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/icon": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "上传图片文件以更换指定账户的图标",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "更换账户图标",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "账户名称",
+                        "name": "account",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "图标图片文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/refresh": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "重新加载当前账本的账户列表和货币汇率缓存",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "刷新账户缓存",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/type": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回当前账本定义的所有账户类型（Key/Name 对）",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "获取账户类型列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "为当前账本新增一种账户类型映射",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "添加账户类型",
+                "parameters": [
+                    {
+                        "description": "新增类型表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.AddAccountTypeForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/account/valid": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回未关闭的所有账户，包含多货币信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账户"
+                ],
+                "summary": "获取有效账户列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/commodity/currencies": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回当前账本中所有货币及其最新汇率",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品"
+                ],
+                "summary": "获取所有货币列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/commodity/price": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "向账本写入一条新的 price 条目，并刷新货币汇率缓存",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品"
+                ],
+                "summary": "同步商品价格",
+                "parameters": [
+                    {
+                        "description": "商品价格表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.SyncCommodityPriceForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/event": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "向账本中写入一条或多条新的 event 记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "事件"
+                ],
+                "summary": "添加事件",
+                "parameters": [
+                    {
+                        "description": "事件表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.Event"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "从账本中删除匹配的 event 记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "事件"
+                ],
+                "summary": "删除事件",
+                "parameters": [
+                    {
+                        "description": "要删除的事件",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.Event"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/event/all": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回账本中所有记录的事件列表，按日期倒序排列",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "事件"
+                ],
+                "summary": "获取所有事件",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/file": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "更新指定账本文件的内容，先自动备份再写入",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "文件"
+                ],
+                "summary": "更新账本文件内容",
+                "parameters": [
+                    {
+                        "description": "文件更新表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.UpdateSourceFileForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/file/content": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回指定相对路径的 .bean 源文件内容",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "文件"
+                ],
+                "summary": "读取账本文件内容",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "文件相对路径",
+                        "name": "path",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/file/dir": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回账本数据目录下所有 .bean 文件的相对路径列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "文件"
+                ],
+                "summary": "获取账本文件目录结构",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/import/abc": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "解析农业銀行导出的 CSV 账单文件，返回解析后的交易预览列表",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "导入"
+                ],
+                "summary": "导入农业銀行账单 CSV",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "农业銀行 CSV 文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/import/alipay": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "解析支付宝导出的 CSV 账单文件，返回解析后的交易预览列表",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "导入"
+                ],
+                "summary": "导入支付宝账单 CSV",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "支付宝 CSV 文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/import/icbc": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "解析工商銀行导出的 CSV 账单文件，返回解析后的交易预览列表",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "导入"
+                ],
+                "summary": "导入工商銀行账单 CSV",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "工商銀行 CSV 文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/import/wx": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "解析微信支付导出的 CSV 账单文件，返回解析后的交易预览列表",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "导入"
+                ],
+                "summary": "导入微信支付账单 CSV",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "微信支付 CSV 文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/ledger": {
+            "delete": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "删除当前账本的所有数据文件（不可恢复），需要 ledgerId 认证",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账本"
+                ],
+                "summary": "删除账本",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/ledger/check": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "运行 bean-check 对账本文件进行语法和余额校验，返回错误列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账本"
+                ],
+                "summary": "检查账本合法性",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/account/balance": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "统计指定账户每天的最后余额变化",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "账户余额变化统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "账户前缀筛选",
+                        "name": "prefix",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "年份筛选",
+                        "name": "year",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "月份筛选",
+                        "name": "month",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/account/flow": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "统计指定时间范围内账户之间的资金流向，用于渲染桑基图",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "账户资金流向统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "账户前缀筛选",
+                        "name": "prefix",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "年份筛选",
+                        "name": "year",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "月份筛选",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账户层级",
+                        "name": "level",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/account/percent": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "统计指定前缀账户在某时间范围内的金额占比",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "账户占比统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "账户前缀筛选",
+                        "name": "prefix",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "年份筛选",
+                        "name": "year",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "月份筛选",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账户层级（1表示按类型合并）",
+                        "name": "level",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/account/trend": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "统计指定账户在不同时间维度（day/month/year/sum）的金额变化趋势",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "账户趋势统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "账户前缀筛选",
+                        "name": "prefix",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "年份筛选",
+                        "name": "year",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "月份筛选",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "时间维度：day/month/year/sum",
+                        "name": "type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/commodity/price": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回账本中记录的全部商品价格历史数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "商品价格历史",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/month/calendar": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "统计指定年月内每天的支出金额，用于渲染日历热力图",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "月度日历热力图统计",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "年份",
+                        "name": "year",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "月份",
+                        "name": "month",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/month/total": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "按月统计收入与支出金额，返回每月的收支折线/柱状图数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "月度收支汇总统计",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/months": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回账本中存在交易记录的所有年月，按年月倒序排列",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "获取所有交易月份列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/payee": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "统计指定时间范围内各商家的支出金额，按金额排序",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "商家支出统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "账户前缀筛选",
+                        "name": "prefix",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "年份筛选",
+                        "name": "year",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "月份筛选",
+                        "name": "month",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/stats/total": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回每种一级账户类型（Assets/Liabilities/Income/Expenses/Equity）的总金额",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计"
+                ],
+                "summary": "获取所有账户类型汇总",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "月份筛选，格式 2006-01",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "年份筛选",
+                        "name": "year",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/tags": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回当前账本中使用过的所有交易标签",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "标签"
+                ],
+                "summary": "获取所有标签",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/transaction": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "查询交易列表，支持按时间和账户筛选",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "获取交易列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "新增交易，或传入 ID 更新已有交易",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "新增或更新交易",
+                "parameters": [
+                    {
+                        "description": "交易表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.TransactionForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "根据交易 ID 删除交易记录",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "删除交易",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "交易 ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/transaction/batch": {
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "批量写入多条交易记录到账本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "批量新增交易",
+                "parameters": [
+                    {
+                        "description": "批量交易表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/service.TransactionForm"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/transaction/detail": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "根据交易 ID 获取交易详情（含分录）",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "获取交易详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "交易 ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/transaction/payee": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回最近交易中的商家名称列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "获取交易商家列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/transaction/raw": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "根据交易 ID 获取原始文本",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "获取交易原始文本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "交易 ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "根据交易 ID 更新原始文本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易"
+                ],
+                "summary": "更新交易原始文本",
+                "parameters": [
+                    {
+                        "description": "更新原始文本表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.UpdateRawTextTransactionForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/transaction/template": {
+            "get": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "返回账本中保存的交易模板",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易模板"
+                ],
+                "summary": "获取交易模板列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "新增一条交易模板配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易模板"
+                ],
+                "summary": "新增交易模板",
+                "parameters": [
+                    {
+                        "description": "交易模板",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.TransactionTemplate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "LedgerId": []
+                    }
+                ],
+                "description": "根据模板 ID 删除交易模板",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "交易模板"
+                ],
+                "summary": "删除交易模板",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "模板 ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/check": {
+            "post": {
+                "description": "检查服务器上是否已安装 bean-query 命令",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统"
+                ],
+                "summary": "检查 beancount 环境",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/config": {
+            "get": {
+                "description": "返回服务器的全局配置信息，包含 DataPath、货币、日期等设置",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置"
+                ],
+                "summary": "获取全局服务配置",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "更新服务器全局配置；需要提供 secret、startDate、dataPath、operatingCurrency 等字段",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置"
+                ],
+                "summary": "更新全局服务配置",
+                "parameters": [
+                    {
+                        "description": "全局配置表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.UpdateConfigForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ledger": {
+            "get": {
+                "description": "返回所有已创建的账本信息列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账本"
+                ],
+                "summary": "获取账本列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "根据 ledgerName 和 secret 打开已有账本或创建新账本，成功后返回 ledgerId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账本"
+                ],
+                "summary": "打开或创建账本",
+                "parameters": [
+                    {
+                        "description": "账本登录/创建表单",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.LoginForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/version": {
+            "get": {
+                "description": "返回当前 beancount-gs 服务版本号",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统"
+                ],
+                "summary": "获取服务版本号",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "service.AddAccountForm": {
+            "type": "object",
+            "required": [
+                "account",
+                "date"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "currency": {
+                    "description": "账户计量单位可以为空",
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.AddAccountTypeForm": {
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.BalanceAccountForm": {
+            "type": "object",
+            "required": [
+                "account",
+                "date",
+                "number"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.CloseAccountForm": {
+            "type": "object",
+            "required": [
+                "account",
+                "date"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.Event": {
+            "type": "object",
+            "required": [
+                "date",
+                "description"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "stage": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "service.LoginForm": {
+            "type": "object",
+            "required": [
+                "ledgerName"
+            ],
+            "properties": {
+                "isBak": {
+                    "type": "boolean"
+                },
+                "ledgerName": {
+                    "type": "string"
+                },
+                "openingBalances": {
+                    "type": "string"
+                },
+                "operatingCurrency": {
+                    "type": "string"
+                },
+                "secret": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.SyncCommodityPriceForm": {
+            "type": "object",
+            "required": [
+                "commodity",
+                "date",
+                "price"
+            ],
+            "properties": {
+                "commodity": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.TransactionEntryForm": {
+            "type": "object",
+            "required": [
+                "account"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "isAnotherCurrency": {
+                    "type": "boolean"
+                },
+                "number": {
+                    "type": "number"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceCurrency": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.TransactionForm": {
+            "type": "object",
+            "required": [
+                "date",
+                "desc"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "divideDateList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "entries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/service.TransactionEntryForm"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "narration": {
+                    "type": "string"
+                },
+                "payee": {
+                    "type": "string"
+                },
+                "rawText": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "service.TransactionTemplate": {
+            "type": "object",
+            "required": [
+                "date",
+                "desc",
+                "templateName"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "entries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/service.TransactionEntryForm"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "payee": {
+                    "type": "string"
+                },
+                "templateName": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.UpdateConfigForm": {
+            "type": "object",
+            "required": [
+                "dataPath",
+                "isBak",
+                "openingBalances",
+                "operatingCurrency",
+                "secret",
+                "startDate"
+            ],
+            "properties": {
+                "dataPath": {
+                    "type": "string"
+                },
+                "isBak": {
+                    "type": "boolean"
+                },
+                "openingBalances": {
+                    "type": "string"
+                },
+                "operatingCurrency": {
+                    "type": "string"
+                },
+                "secret": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.UpdateRawTextTransactionForm": {
+            "type": "object",
+            "required": [
+                "id",
+                "rawText"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "rawText": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.UpdateSourceFileForm": {
+            "type": "object",
+            "required": [
+                "path"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "LedgerId": {
+            "description": "需要授权的接口请在 Header 中传入 ledgerId",
+            "type": "apiKey",
+            "name": "ledgerId",
+            "in": "header"
+        }
+    }
+}

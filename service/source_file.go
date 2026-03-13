@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+// QueryLedgerSourceFileDir godoc
+// @Summary     获取账本文件目录结构
+// @Description 返回账本数据目录下所有 .bean 文件的相对路径列表
+// @Tags        文件
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/file/dir [get]
 func QueryLedgerSourceFileDir(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	result, err := dirs(ledgerConfig.DataPath, ledgerConfig.DataPath)
@@ -46,6 +55,17 @@ func dirs(parent string, dirPath string) ([]string, error) {
 	return result, nil
 }
 
+// QueryLedgerSourceFileContent godoc
+// @Summary     读取账本文件内容
+// @Description 返回指定相对路径的 .bean 源文件内容
+// @Tags        文件
+// @Produce     json
+// @Security    LedgerId
+// @Param       path query string true "文件相对路径"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/file/content [get]
 func QueryLedgerSourceFileContent(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	queryParams := script.GetQueryParams(c)
@@ -66,6 +86,18 @@ type UpdateSourceFileForm struct {
 	Content string `form:"content"`
 }
 
+// UpdateLedgerSourceFileContent godoc
+// @Summary     更新账本文件内容
+// @Description 更新指定账本文件的内容，先自动备份再写入
+// @Tags        文件
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body UpdateSourceFileForm true "文件更新表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/file [post]
 func UpdateLedgerSourceFileContent(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 

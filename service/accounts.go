@@ -11,6 +11,15 @@ import (
 	"time"
 )
 
+// QueryValidAccount godoc
+// @Summary     获取有效账户列表
+// @Description 返回未关闭的所有账户，包含多货币信息
+// @Tags        账户
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/valid [get]
 func QueryValidAccount(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	allAccounts := script.GetLedgerAccounts(ledgerConfig.Id)
@@ -34,6 +43,15 @@ type accountPosition struct {
 	Position       string `json:"position"`
 }
 
+// QueryAllAccount godoc
+// @Summary     获取全部账户列表（含余额）
+// @Description 返回所有未关闭账户及其币种余额和市场价値
+// @Tags        账户
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/all [get]
 func QueryAllAccount(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 
@@ -133,6 +151,15 @@ func parseAccountPositions(ledgerId string, input string) []script.AccountPositi
 	return positions
 }
 
+// QueryAccountType godoc
+// @Summary     获取账户类型列表
+// @Description 返回当前账本定义的所有账户类型（Key/Name 对）
+// @Tags        账户
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/type [get]
 func QueryAccountType(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	accountTypes := script.GetLedgerAccountTypes(ledgerConfig.Id)
@@ -152,6 +179,18 @@ type AddAccountForm struct {
 	Currency string `form:"currency"`
 }
 
+// AddAccount godoc
+// @Summary     创建新账户
+// @Description 在账本中开启一个新账户
+// @Tags        账户
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body AddAccountForm true "新增账户表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account [post]
 func AddAccount(c *gin.Context) {
 	var accountForm AddAccountForm
 	if err := c.ShouldBindJSON(&accountForm); err != nil {
@@ -191,6 +230,18 @@ type AddAccountTypeForm struct {
 	Name string `form:"name" binding:"required"`
 }
 
+// AddAccountType godoc
+// @Summary     添加账户类型
+// @Description 为当前账本新增一种账户类型映射
+// @Tags        账户
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body AddAccountTypeForm true "新增类型表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/type [post]
 func AddAccountType(c *gin.Context) {
 	var addAccountTypeForm AddAccountTypeForm
 	if err := c.ShouldBindJSON(&addAccountTypeForm); err != nil {
@@ -226,6 +277,18 @@ type CloseAccountForm struct {
 	Account string `form:"account" binding:"required"`
 }
 
+// CloseAccount godoc
+// @Summary     关闭账户
+// @Description 在账本中关闭指定账户，记录关闭日期
+// @Tags        账户
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body CloseAccountForm true "关闭账户表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/close [post]
 func CloseAccount(c *gin.Context) {
 	var accountForm CloseAccountForm
 	if err := c.ShouldBindJSON(&accountForm); err != nil {
@@ -254,6 +317,19 @@ func CloseAccount(c *gin.Context) {
 	})
 }
 
+// ChangeAccountIcon godoc
+// @Summary     更换账户图标
+// @Description 上传图片文件以更换指定账户的图标
+// @Tags        账户
+// @Accept      mpfd
+// @Produce     json
+// @Security    LedgerId
+// @Param       account query  string true "账户名称"
+// @Param       file    formData file   true "图标图片文件"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/icon [post]
 func ChangeAccountIcon(c *gin.Context) {
 	account := c.Query("account")
 	if account == "" {
@@ -278,6 +354,18 @@ type BalanceAccountForm struct {
 	Number  string `form:"number" binding:"required" json:"number"`
 }
 
+// BalanceAccount godoc
+// @Summary     平衡账户余额
+// @Description 对指定账户创建一条 balance 断言录入账本
+// @Tags        账户
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body BalanceAccountForm true "平衡账户表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/balance [post]
 func BalanceAccount(c *gin.Context) {
 	var accountForm BalanceAccountForm
 	if err := c.ShouldBindJSON(&accountForm); err != nil {
@@ -330,6 +418,15 @@ func BalanceAccount(c *gin.Context) {
 	OK(c, result)
 }
 
+// RefreshAccountCache godoc
+// @Summary     刷新账户缓存
+// @Description 重新加载当前账本的账户列表和货币汇率缓存
+// @Tags        账户
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/account/refresh [post]
 func RefreshAccountCache(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	// 加载账户缓存

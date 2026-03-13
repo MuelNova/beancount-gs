@@ -55,6 +55,17 @@ func (s TransactionSort) Less(i, j int) bool {
 	return a <= b
 }
 
+// QueryTransactionDetailById godoc
+// @Summary     获取交易详情
+// @Description 根据交易 ID 获取交易详情（含分录）
+// @Tags        交易
+// @Produce     json
+// @Security    LedgerId
+// @Param       id query string true "交易 ID"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/detail [get]
 func QueryTransactionDetailById(c *gin.Context) {
 	queryParams := script.GetQueryParams(c)
 	if queryParams.ID == "" {
@@ -99,6 +110,17 @@ func QueryTransactionDetailById(c *gin.Context) {
 	OK(c, transactionForm)
 }
 
+// QueryTransactionRawTextById godoc
+// @Summary     获取交易原始文本
+// @Description 根据交易 ID 获取原始文本
+// @Tags        交易
+// @Produce     json
+// @Security    LedgerId
+// @Param       id query string true "交易 ID"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/raw [get]
 func QueryTransactionRawTextById(c *gin.Context) {
 	queryParams := script.GetQueryParams(c)
 	if queryParams.ID == "" {
@@ -113,6 +135,15 @@ func QueryTransactionRawTextById(c *gin.Context) {
 	OK(c, result)
 }
 
+// QueryTransactions godoc
+// @Summary     获取交易列表
+// @Description 查询交易列表，支持按时间和账户筛选
+// @Tags        交易
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction [get]
 func QueryTransactions(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	queryParams := script.GetQueryParams(c)
@@ -189,6 +220,18 @@ func sum(entries []TransactionEntryForm, openingBalances string) decimal.Decimal
 	return sumVal
 }
 
+// AddBatchTransactions godoc
+// @Summary     批量新增交易
+// @Description 批量写入多条交易记录到账本
+// @Tags        交易
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body []TransactionForm true "批量交易表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/batch [post]
 func AddBatchTransactions(c *gin.Context) {
 	var addTransactionForms []TransactionForm
 	if err := c.ShouldBindJSON(&addTransactionForms); err != nil {
@@ -208,6 +251,18 @@ func AddBatchTransactions(c *gin.Context) {
 	OK(c, result)
 }
 
+// AddTransactions godoc
+// @Summary     新增或更新交易
+// @Description 新增交易，或传入 ID 更新已有交易
+// @Tags        交易
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body TransactionForm true "交易表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction [post]
 func AddTransactions(c *gin.Context) {
 	var addTransactionForm TransactionForm
 	if err := c.ShouldBindJSON(&addTransactionForm); err != nil {
@@ -396,6 +451,18 @@ func filterEmptyStrings(arr []string) []string {
 	return result
 }
 
+// UpdateTransactionRawTextById godoc
+// @Summary     更新交易原始文本
+// @Description 根据交易 ID 更新原始文本
+// @Tags        交易
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body UpdateRawTextTransactionForm true "更新原始文本表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/raw [post]
 func UpdateTransactionRawTextById(c *gin.Context) {
 	var rawTextUpdateTransactionForm UpdateRawTextTransactionForm
 	if err := c.ShouldBindJSON(&rawTextUpdateTransactionForm); err != nil {
@@ -443,6 +510,17 @@ func UpdateTransactionRawTextById(c *gin.Context) {
 	OK(c, true)
 }
 
+// DeleteTransactionById godoc
+// @Summary     删除交易
+// @Description 根据交易 ID 删除交易记录
+// @Tags        交易
+// @Produce     json
+// @Security    LedgerId
+// @Param       id query string true "交易 ID"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction [delete]
 func DeleteTransactionById(c *gin.Context) {
 	queryParams := script.GetQueryParams(c)
 	if queryParams.ID == "" {
@@ -505,6 +583,15 @@ type transactionPayee struct {
 	Value string `bql:"distinct payee" json:"value"`
 }
 
+// QueryTransactionPayees godoc
+// @Summary     获取交易商家列表
+// @Description 返回最近交易中的商家名称列表
+// @Tags        交易
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/payee [get]
 func QueryTransactionPayees(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	payeeList := make([]transactionPayee, 0)
@@ -532,6 +619,15 @@ type TransactionTemplate struct {
 	Entries      []TransactionEntryForm `form:"entries" json:"entries"`
 }
 
+// QueryTransactionTemplates godoc
+// @Summary     获取交易模板列表
+// @Description 返回账本中保存的交易模板
+// @Tags        交易模板
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/template [get]
 func QueryTransactionTemplates(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 	filePath := script.GetLedgerTransactionsTemplateFilePath(ledgerConfig.DataPath)
@@ -543,6 +639,18 @@ func QueryTransactionTemplates(c *gin.Context) {
 	OK(c, templates)
 }
 
+// AddTransactionTemplate godoc
+// @Summary     新增交易模板
+// @Description 新增一条交易模板配置
+// @Tags        交易模板
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body TransactionTemplate true "交易模板"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/template [post]
 func AddTransactionTemplate(c *gin.Context) {
 	var transactionTemplate TransactionTemplate
 	if err := c.ShouldBindJSON(&transactionTemplate); err != nil {
@@ -575,6 +683,17 @@ func AddTransactionTemplate(c *gin.Context) {
 	OK(c, transactionTemplate)
 }
 
+// DeleteTransactionTemplate godoc
+// @Summary     删除交易模板
+// @Description 根据模板 ID 删除交易模板
+// @Tags        交易模板
+// @Produce     json
+// @Security    LedgerId
+// @Param       id query string true "模板 ID"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/transaction/template [delete]
 func DeleteTransactionTemplate(c *gin.Context) {
 	templateId := c.Query("id")
 	if templateId == "" {

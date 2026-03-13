@@ -32,6 +32,15 @@ func (e Events) Swap(i, j int) {
 	e[i], e[j] = e[j], e[i]
 }
 
+// GetAllEvents godoc
+// @Summary     获取所有事件
+// @Description 返回账本中所有记录的事件列表，按日期倒序排列
+// @Tags        事件
+// @Produce     json
+// @Security    LedgerId
+// @Success     200 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/event/all [get]
 func GetAllEvents(c *gin.Context) {
 	ledgerConfig := script.GetLedgerConfigFromContext(c)
 
@@ -69,6 +78,18 @@ func GetAllEvents(c *gin.Context) {
 	OK(c, events)
 }
 
+// AddEvent godoc
+// @Summary     添加事件
+// @Description 向账本中写入一条或多条新的 event 记录
+// @Tags        事件
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body Event true "事件表单"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/event [post]
 func AddEvent(c *gin.Context) {
 	var event Event
 	if err := c.ShouldBindJSON(&event); err != nil {
@@ -106,6 +127,18 @@ func AddEvent(c *gin.Context) {
 	OK(c, events)
 }
 
+// DeleteEvent godoc
+// @Summary     删除事件
+// @Description 从账本中删除匹配的 event 记录
+// @Tags        事件
+// @Accept      json
+// @Produce     json
+// @Security    LedgerId
+// @Param       body body Event true "要删除的事件"
+// @Success     200 {object} map[string]interface{}
+// @Failure     400 {object} map[string]interface{}
+// @Failure     401 {object} map[string]interface{}
+// @Router      /api/auth/event [delete]
 func DeleteEvent(c *gin.Context) {
 	var event Event
 	if err := c.ShouldBindJSON(&event); err != nil {
